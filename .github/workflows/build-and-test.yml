@@ -5,6 +5,9 @@ on:
       upload-pages-artifact:
         type: boolean
         required: false
+      upload-release:
+        type: boolean
+        required: false
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -21,3 +24,9 @@ jobs:
         uses: actions/upload-pages-artifact@v1
         with:
           path: dist/
+      - run: zip -r release-1.${{ github.run_number }}.zip dist/
+      - if: ${{ inputs.upload-release }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: release
+          path: release-1.${{ github.run_number }}.zip
