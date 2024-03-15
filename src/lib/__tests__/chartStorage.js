@@ -1,5 +1,3 @@
-// Mock - Thank U Perplexity. 
-
 const { JSDOM } = require('jsdom');
 const dom = new JSDOM('<!doctype html><html><body></body></html>', {
     url: 'http://localhost'
@@ -17,6 +15,16 @@ const { saveChart , loadAllSavedCharts , loadSavedChart , updateCurrentChartData
  */ 
 
 require('@testing-library/jest-dom'); 
+
+// Function 1. 
+
+test('Initial Test - saveChart. ', () => {
+    const mockChart = { type: 'line', data: [1, 2, 3] };
+    saveChart(mockChart);
+    const savedCharts = JSON.parse(window.localStorage.getItem('savedCharts'));
+    expect(savedCharts).toHaveLength(1);
+    expect(savedCharts[0]).toEqual(mockChart);
+}); 
 
 // Function 2. 
 
