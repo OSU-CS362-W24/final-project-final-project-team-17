@@ -16,25 +16,64 @@ const { saveChart , loadAllSavedCharts , loadSavedChart , updateCurrentChartData
 
 require('@testing-library/jest-dom'); 
 
+TODO: // The data in the chart might not be up to the requirement. 
+
 // Function 1. 
 
-test('Initial Test - saveChart. ', () => {
-    const mockChart = { type: 'line', data: [1, 2, 3] };
-    saveChart(mockChart);
+test('Initial Test - saveChart. ', () => { 
+    window.localStorage.clear() ; 
+    const chartData = {
+        type: 'line',
+        data: [
+            { x: 1, y: 10 },
+            { x: 2, y: 20 },
+            { x: 3, y: 30 }
+        ],
+        xLabel: 'X Axis',
+        yLabel: 'Y Axis',
+        title: 'Sample Chart',
+        color: '#FFFFFF'
+    };
+    saveChart(chartData);
     const savedCharts = JSON.parse(window.localStorage.getItem('savedCharts'));
-    expect(savedCharts).toHaveLength(1);
-    expect(savedCharts[0]).toEqual(mockChart);
+    expect(savedCharts).toHaveLength(1); 
+    // TODO: This can be taken as logic in a unit test. 
+    expect(savedCharts[0]).toEqual(chartData); 
+    window.localStorage.clear() ; 
 }); 
 
 // Function 2. 
 
 test( "Initial Test - loadAllSavedCharts. " , function () { 
     window.localStorage.clear() ; 
-    const chart_1 = { type: 'line', data: [1, 2, 3] }; 
-    const chart_2 = { type: 'line', data: [1, 4, 3] }; 
+    const chart_1 = {
+        type: 'line',
+        data: [
+            { x: 1, y: 10 },
+            { x: 2, y: 20 },
+            { x: 3, y: 30 }
+        ],
+        xLabel: 'X Axis',
+        yLabel: 'Y Axis',
+        title: 'Sample Chart',
+        color: '#FFFFFF'
+    };
+    const chart_2 = {
+        type: 'line',
+        data: [
+            { x: 1, y: 10 },
+            { x: 3, y: 30 },
+            { x: 2, y: 20 }
+        ],
+        xLabel: 'X Axis',
+        yLabel: 'Y Axis',
+        title: 'Sample Chart',
+        color: '#FFFFFF'
+    }; 
     saveChart( chart_1 ) ; 
     saveChart( chart_2 ) ; 
-    var expectedList = [ { type: 'line', data: [1, 2, 3] } , { type: 'line', data: [1, 4, 3] } ] ; 
+    // TODO: This can be taken as logic in a unit test. 
+    var expectedList = [ chart_1 , chart_2 ] ; 
     expect( loadAllSavedCharts() ).toEqual( expectedList ) ; 
     window.localStorage.clear() ; 
 }) ; 
@@ -43,22 +82,75 @@ test( "Initial Test - loadAllSavedCharts. " , function () {
 
 test( "Initial Test - loadSavedChart. " , function () { 
     window.localStorage.clear() ; 
-    const chart_1 = { type: 'line', data: [1, 2, 3] }; 
-    const chart_2 = { type: 'line', data: [1, 4, 3] }; 
+    const chart_1 = {
+        type: 'line',
+        data: [
+            { x: 1, y: 10 },
+            { x: 2, y: 20 },
+            { x: 3, y: 30 }
+        ],
+        xLabel: 'X Axis',
+        yLabel: 'Y Axis',
+        title: 'Sample Chart',
+        color: '#FFFFFF'
+    };
+    const chart_2 = {
+        type: 'line',
+        data: [
+            { x: 1, y: 10 },
+            { x: 3, y: 30 },
+            { x: 2, y: 20 }
+        ],
+        xLabel: 'X Axis',
+        yLabel: 'Y Axis',
+        title: 'Sample Chart',
+        color: '#FFFFFF'
+    }; 
     saveChart( chart_1 ) ; 
     saveChart( chart_2 ) ; 
-    var expectedChart = { type: 'line', data: [1, 4, 3] } ; 
-    expect( loadSavedChart( 1 ) ).toEqual( expectedChart ) ; 
+    // TODO: This can be taken as logic in a unit test. 
+    expect( loadSavedChart( 1 ) ).toEqual( chart_2 ) ; 
     window.localStorage.clear() ; 
 }) ; 
+
+// Function 4. 
+
+test('updateCurrentChartData - Stores chart data in localStorage', () => {
+    const chartData = {
+        type: 'line',
+        data: [
+            { x: 1, y: 10 },
+            { x: 2, y: 20 },
+            { x: 3, y: 30 }
+        ],
+        xLabel: 'X Axis',
+        yLabel: 'Y Axis',
+        title: 'Sample Chart',
+        color: '#FFFFFF'
+    };
+    updateCurrentChartData(chartData);
+    const storedChartDataString = window.localStorage.getItem('currentChartData');
+    const storedChartData = JSON.parse(storedChartDataString) ; 
+    expect(storedChartData).toEqual(chartData);
+}); 
 
 // Function 5. 
 
 test( "Initial Test - loadCurrentChartData. " , function () { 
     window.localStorage.clear() ; 
-    const chart_1 = { type: 'line', data: [1, 2, 3] }; 
-    updateCurrentChartData( chart_1 ) ; 
-    var expectedChart = { type: 'line', data: [1, 2, 3] } ; 
-    expect( loadCurrentChartData() ).toEqual( expectedChart ) ; 
+    const chartData = {
+        type: 'line',
+        data: [
+            { x: 1, y: 10 },
+            { x: 2, y: 20 },
+            { x: 3, y: 30 }
+        ],
+        xLabel: 'X Axis',
+        yLabel: 'Y Axis',
+        title: 'Sample Chart',
+        color: '#FFFFFF'
+    };
+    updateCurrentChartData( chartData ) ; 
+    expect( loadCurrentChartData() ).toEqual( chartData ) ; 
     window.localStorage.clear() ; 
 }) ; 
