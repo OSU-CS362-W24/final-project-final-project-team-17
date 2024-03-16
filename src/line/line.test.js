@@ -32,9 +32,12 @@ function initElements(elements){
 	elements.Y_inputs = domTesting.getAllByLabelText(document, 'Y');
 	elements.X_label = domTesting.getByText(document, '+');
 	elements.Y_label = domTesting.getByText(document, '+');
+	elements.title_input = domTesting.getByLabelText(document, 'Chart title');
 	elements.add_input_button = domTesting.getByText(document, '+');
 	elements.generate_chart_button = domTesting.getByText(document, 
 														  'Generate chart');
+	elements.clear_chart_button = domTesting.getByText(document, 
+													   'Clear chart data');
 
 }
 
@@ -188,6 +191,50 @@ async function test2b(elements, X_input, Y_input){
 
 }
 
+async function test3(elements, title, inputs, num_empty_inputs){
+
+	// do initializations: init the files, init our element object, setup 
+	// our user
+	initDomFromFiles(htmlPath, jsPath);
+	initElements(elements);
+	const user = userEvent.setup();
+	var length = 1;
+
+	// do action: type in the charts title
+	await user.type(elements.title_input, title);
+
+	for(const input of inputs){
+
+		// do actions: create new (X, Y) inputs and add the above values 
+		// (stored in input) to them
+		await user.type(elements.X_inputs[length - 1], input[0]);
+		await user.type(elements.Y_inputs[length - 1], input[1]);
+		await user.click(elements.add_input_button);
+
+	}
+
+	// do actions: add K empty (X, Y) inputs
+	for(var i = 0; i < num_empty_inputs - 1; i++){ 
+		await user.click(elements.add_input_button);
+	}
+
+	// do action: clear the chart!!
+	await user.click(elements.clear_chart_button);
+
+	// do assertions: assert theres only one (X, Y) input, assert that all
+	// other values have been cleared of their previous text
+	assertInputLength(elements, 1);
+	expect(elements.title_input).toHaveValue('');
+	expect(elements.X_label).toHaveValue('');
+	expect(elements.Y_label).toHaveValue('');
+	expect(elements.X_inputs[0]).toHaveValue(null);
+	expect(elements.Y_inputs[0]).toHaveValue(null);
+
+	// reset elements object + page for next test :)
+	await clearElements(elements, user);
+
+}
+
 describe('UI integration tests', () => {
 
 	const elements = {
@@ -196,6 +243,7 @@ describe('UI integration tests', () => {
 		Y_inputs: undefined,
 		X_label: undefined,
 		Y_label: undefined,
+		title_input: undefined,
 		add_input_button: undefined,
 		generate_chart_button: undefined
 
@@ -215,6 +263,13 @@ describe('UI integration tests', () => {
 
 		await test2a(elements, "Cats", "Bananas");
 		await test2b(elements, "1", "2");
+
+	});
+
+	test('Clearing chart data', async () => {
+	
+		await test3(elements, "Cats vs. Dogs", 
+					[['1','2'],['3','4'],['5','6'],['7','8']], 2);
 
 	});
 
