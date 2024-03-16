@@ -30,7 +30,11 @@ function initElements(elements){
 
 	elements.X_inputs = domTesting.getAllByLabelText(document, 'X');
 	elements.Y_inputs = domTesting.getAllByLabelText(document, 'Y');
+	elements.X_label = domTesting.getByText(document, '+');
+	elements.Y_label = domTesting.getByText(document, '+');
 	elements.add_input_button = domTesting.getByText(document, '+');
+	elements.generate_chart_button = domTesting.getByText(document, 
+														  'Generate chart');
 
 }
 
@@ -122,13 +126,78 @@ async function test1(elements, inputs, num_empty_inputs){
 
 }
 
+async function test2a(elements, X_label_text, Y_label_text){
+
+	// do initializations: init the files, init our element object, setup our
+	// user, and start spying on window.alert. NOTE: mocking the implementation
+	// because 'window.alert' not implemented error is being throw when i dont
+	// stub the method
+	initDomFromFiles(htmlPath, jsPath);
+	initElements(elements);
+	const user = userEvent.setup();
+	const alert_spy = jest.spyOn(window, "alert").mockImplementation(() => {
+	});
+
+	// do actions: type in the given text for the X_label and the Y_label,
+	// click the generate chart button
+	await user.type(elements.X_label, X_label_text);
+	await user.type(elements.Y_label, Y_label_text);
+	await user.click(elements.generate_chart_button);
+		
+	// do assertions: assert that alert was called and that it was given the
+	// parameter "Error: No data specified!"
+	const call = alert_spy.mock.calls[0][0];
+	expect(alert_spy).toHaveBeenCalled();
+	expect(call).toEqual("Error: No data specified!");
+
+	// reset elements object + page for next test, get rid of spy's middleware
+	// on the window.alert function :)
+	await clearElements(elements, user);
+	alert_spy.mockRestore();
+
+}
+
+async function test2b(elements, X_input, Y_input){
+
+	// do initializations: init the files, init our element object, setup our
+	// user, and start spying on window.alert. NOTE: mocking the implementation
+	// because 'window.alert' not implemented error is being throw when i dont
+	// stub the method
+	initDomFromFiles(htmlPath, jsPath);
+	initElements(elements);
+	const user = userEvent.setup();
+	const alert_spy = jest.spyOn(window, "alert").mockImplementation(() => {
+	});
+
+	// do actions: type in the given text for the X_input and the Y_input,
+	// click the generate chart button
+	await user.type(elements.X_inputs[0], X_input);
+	await user.type(elements.Y_inputs[0], Y_input);
+	await user.click(elements.generate_chart_button);
+		
+	// do assertions: assert that alert was called and that it was given the
+	// parameter "Error: Must specify a label for both X and Y!"
+	const call = alert_spy.mock.calls[0][0];
+	expect(alert_spy).toHaveBeenCalled();
+	expect(call).toEqual("Error: Must specify a label for both X and Y!");
+
+	// reset elements object + page for next test, get rid of spy's middleware
+	// on the window.alert function :)
+	await clearElements(elements, user);
+	alert_spy.mockRestore();
+
+}
+
 describe('UI integration tests', () => {
 
 	const elements = {
 
 		X_inputs: undefined,
 		Y_inputs: undefined,
-		add_input_button: undefined
+		X_label: undefined,
+		Y_label: undefined,
+		add_input_button: undefined,
+		generate_chart_button: undefined
 
 	};
 
@@ -138,8 +207,15 @@ describe('UI integration tests', () => {
 		// missing some weird case that would throw an error
 		await test1(elements, [['0','0'],['100','200']], 5);
 		await test1(elements, [['1','2'],['3','4'],['5','6'],['7','8']], 2);
-		await test1(elements, [['-1','2']], 10);
+		await test1(elements, [['-1','2']], 100);
 		
     });
+
+	test('Alerts displayed for missing chart data', async () => {
+
+		await test2a(elements, "Cats", "Bananas");
+		await test2b(elements, "1", "2");
+
+	});
 
 });
