@@ -1,4 +1,7 @@
-const { JSDOM } = require('jsdom');
+const { JSDOM } = require('jsdom'); 
+
+// TODO: Document This. 
+
 const dom = new JSDOM('<!doctype html><html><body></body></html>', {
     url: 'http://localhost'
 });
@@ -16,11 +19,11 @@ const { saveChart , loadAllSavedCharts , loadSavedChart , updateCurrentChartData
 
 require('@testing-library/jest-dom'); 
 
-TODO: // The data in the chart might not be up to the requirement. 
-
+///////////////////////////// 
 // Function 1. 
+///////////////////////////// 
 
-test('Initial Test - saveChart. ', () => { 
+test('The initial Test - saveChart. ', () => { 
     window.localStorage.clear() ; 
     const chartData = {
         type: 'line',
@@ -42,9 +45,15 @@ test('Initial Test - saveChart. ', () => {
     window.localStorage.clear() ; 
 }); 
 
-// Function 2. 
+// TODO: Additional Tests: 
+// TODO: If an index is not provided in the input. 
+// TODO: If an index is provided in the input. 
 
-test( "Initial Test - loadAllSavedCharts. " , function () { 
+///////////////////////////// 
+// Function 2. - Not Correct - Can not use saveChart. 
+///////////////////////////// 
+
+test( "The initial Test - loadAllSavedCharts. " , function () { 
     window.localStorage.clear() ; 
     const chart_1 = {
         type: 'line',
@@ -78,9 +87,15 @@ test( "Initial Test - loadAllSavedCharts. " , function () {
     window.localStorage.clear() ; 
 }) ; 
 
-// Function 3. 
+// TODO: Additional Tests: 
+// TODO: If multiple charts are saved. 
+// TODO: If no chart is saved. 
 
-test( "Initial Test - loadSavedChart. " , function () { 
+///////////////////////////// 
+// Function 3. - Not Correct - Can not use saveChart. 
+///////////////////////////// 
+
+test( "The initial Test - loadSavedChart. " , function () { 
     window.localStorage.clear() ; 
     const chart_1 = {
         type: 'line',
@@ -113,9 +128,13 @@ test( "Initial Test - loadSavedChart. " , function () {
     window.localStorage.clear() ; 
 }) ; 
 
-// Function 4. 
+// TODO: Additional Tests: Create It. 
 
-test('updateCurrentChartData - Stores chart data in localStorage', () => {
+///////////////////////////// 
+// Function 4. 
+///////////////////////////// 
+
+test('The initial Test - updateCurrentChartData. ', () => {
     const chartData = {
         type: 'line',
         data: [
@@ -134,9 +153,13 @@ test('updateCurrentChartData - Stores chart data in localStorage', () => {
     expect(storedChartData).toEqual(chartData);
 }); 
 
-// Function 5. 
+// TODO: Additional Tests: Create It. 
 
-test( "Initial Test - loadCurrentChartData. " , function () { 
+///////////////////////////// 
+// Function 5. - Not Correct. - Can not use updateCurrentChartData. 
+///////////////////////////// 
+
+test( "The initial Test - loadCurrentChartData. " , function () { 
     window.localStorage.clear() ; 
     const chartData = {
         type: 'line',
@@ -154,3 +177,5 @@ test( "Initial Test - loadCurrentChartData. " , function () {
     expect( loadCurrentChartData() ).toEqual( chartData ) ; 
     window.localStorage.clear() ; 
 }) ; 
+
+// TODO: Additional Tests: Create It. 
