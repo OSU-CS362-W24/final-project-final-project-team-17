@@ -1,7 +1,5 @@
 const sortPoints = require( "../sortPoints" ) ; 
 
-// Done. 
-
 test( "The input is not sorted. " , function () { 
     var inputList = [ 
         { x: 2 , y: 10 } , 

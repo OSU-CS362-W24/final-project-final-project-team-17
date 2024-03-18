@@ -1,7 +1,5 @@
 const generateChartImg = require('../generateChartImg'); 
 
-// Done. 
-
 test('Expect to generate a chart, when the title and the color is provided. ', async () => {
     const pointList = [
         { x: 1, y: 10 },
@@ -209,4 +207,5 @@ test('Expect to generate a chart, when the input list has 10+ points. ', async (
     );
     expect(typeof imgUrl).toBe('string');
     expect(imgUrl.length).toBeGreaterThan(0);
-});
+}); 
+
