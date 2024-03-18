@@ -13,12 +13,6 @@ global.localStorage = {
 }; 
 const { saveChart , loadAllSavedCharts , loadSavedChart , updateCurrentChartData , loadCurrentChartData } = require( "../chartStorage" ) ; 
 
-/**
- * @jest-environment jsdom
- */ 
-
-require('@testing-library/jest-dom'); 
-
 // Function 1. 
 
 // If an index is not provided in the input. 
