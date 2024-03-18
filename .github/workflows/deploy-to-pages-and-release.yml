@@ -1,0 +1,59 @@
+name: Deploy to Github Pages and Create Release
+on:
+  push:
+    branches: [ main ]
+jobs:
+  build-and-test:
+    uses: ./.github/workflows/build-and-test.yml
+    with:
+      upload-pages-artifact: true
+      upload-release: true
+  
+  publish-release:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release
+          path: .
+      - uses: actions/create-release@v1
+        id: create_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: 1.${{ github.run_number }}
+          release_name: 1.${{ github.run_number }}
+          draft: true
+          prerelease: false
+
+      - uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./release-1.${{ github.run_number }}.zip
+          asset_name: release-1.${{ github.run_number }}.zip
+          asset_content_type: application/zip
+      
+      - uses: eregon/publish-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_id: ${{ steps.create_release.outputs.id }}
+
+  deploy-to-pages:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url}}
+    steps:
+      - uses: actions/configure-pages@v4
+      - uses: actions/deploy-pages@v2
+        id: deployment

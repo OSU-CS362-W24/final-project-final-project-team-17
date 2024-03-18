@@ -1,0 +1,5 @@
+name: Build and Test on Pull Requests
+on: [ pull_request ]
+jobs:
+  build-and-test:
+    uses: ./.github/workflows/build-and-test.yml
