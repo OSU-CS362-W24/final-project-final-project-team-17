@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-
 const fs = require('fs');
 require('@testing-library/jest-dom');
 const domTesting = require('@testing-library/dom');
@@ -71,6 +70,7 @@ async function testAddValues(elements, inputs, num_empty_inputs){
 
 	}
 
+	// this function will refresh everything for our future tests! :)
 	await functions.resetForNextTest(elements);
 
 }

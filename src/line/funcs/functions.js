@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-
 const fs = require('fs');
 require('@testing-library/jest-dom');
 const domTesting = require('@testing-library/dom');
@@ -56,6 +55,7 @@ function resetForNextTest(elements){
 // to an expected length
 function assertInputLength(elements, expected_length){
 
+	// initElements will refresh the elements on the page
 	initElements(elements);
 	expect(elements.X_inputs).toHaveLength(expected_length);
 	expect(elements.Y_inputs).toHaveLength(expected_length);
@@ -64,11 +64,13 @@ function assertInputLength(elements, expected_length){
 
 // this function will get the path to the html and js paths that we want to use
 // for testing. this is needed because all of these functions are an extra 
-// directory deeper now
+// directory deeper now (in the /funcs directory)
 function getPaths(){
 
-	const htmlPath = ((`${__dirname}`).split('/')).slice(0, -1).join('/') + '/line.html';
-	const jsPath = ((`${__dirname}`).split('/')).slice(0, -1).join('/') + '/line.js';
+	const htmlPath = ((`${__dirname}`).split('/')).slice(0, -1).join('/') 
+																+ '/line.html';
+	const jsPath = ((`${__dirname}`).split('/')).slice(0, -1).join('/') 
+																+ '/line.js';
 
 	return [htmlPath, jsPath];
 

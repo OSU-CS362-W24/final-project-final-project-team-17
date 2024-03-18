@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-
 const fs = require('fs');
 require('@testing-library/jest-dom');
 const domTesting = require('@testing-library/dom');
@@ -13,8 +12,7 @@ const [htmlPath, jsPath] = functions.getPaths();
 async function testClearChart(elements, title, color, inputs, 
                               num_empty_inputs){
 
-	// do initializations: init the files, init our element object, setup 
-	// our user
+	// do initializations: init the files, setup our user
 	functions.initDomFromFiles(htmlPath, jsPath);
 	functions.initElements(elements);
 	const user = userEvent.setup();
@@ -52,7 +50,7 @@ async function testClearChart(elements, title, color, inputs,
 	expect(elements.Y_inputs[0]).toHaveValue(null);
 	expect(elements.color_input).toHaveValue('#ff4500');
 
-	// reset elements object + page for next test :)
+	// this function will refresh everything for our future tests! :)
 	await functions.resetForNextTest(elements);
 
 }

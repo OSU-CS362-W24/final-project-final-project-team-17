@@ -63,8 +63,8 @@ async function testMissingCoord(elements, X_input, Y_input){
 	expect(alert_spy).toHaveBeenCalled();
 	expect(call).toEqual('Error: Must specify a label for both X and Y!');
 
-	// reset elements object + page for next test, get rid of spy's middleware
-	// on the window.alert function :)
+	// this function will refresh everything for our future tests! (+ get rid
+    // of spys middleware):)
 	await functions.resetForNextTest(elements);
 	alert_spy.mockRestore();
 
