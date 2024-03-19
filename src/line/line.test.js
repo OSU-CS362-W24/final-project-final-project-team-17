@@ -36,24 +36,35 @@ describe('UI integration tests', () => {
 
     test('Adding values in the chart builder', async () => {
 
-		// run several tests! cant hurt to run more :)
-		await testAddValues(elements, [['0','0'],['100','200']], 5);
-		await testAddValues(elements, [['1','2'],['3','4'],['5','6'],['7','8']], 2);
-		await testAddValues(elements, [['-1','2']], 100);
+		// tests to make sure that we can properly create and fill input boxes
+		await testAddValues.testFillInputs(elements, [['0','0'],['100','200']]);
+		await testAddValues.testFillInputs(elements, [['1','2'],['3','4'],['5','6'],['7','8']]);
+		await testAddValues.testFillInputs(elements, [['-1','2']]);
+
+		// tests to make sure that we can properly create empty input boxes
+		await testAddValues.testEmptyInputs(elements, 2);
+		await testAddValues.testEmptyInputs(elements, 5);
+		await testAddValues.testEmptyInputs(elements, 100);
+
+		// tests to make sure that adding new input boxes does not affect old
+		// inputs
+		await testAddValues.testAddValues(elements, [['0','0'],['100','200']], 5);
+		await testAddValues.testAddValues(elements, [['1','2'],['3','4'],['5','6'],['7','8']], 2);
+		await testAddValues.testAddValues(elements, [['-1','2']], 100);
 		
     });
 
 	test('Alerts displayed for missing chart data', async () => {
 
 		// run several tests! cant hurt to run more :)
-		await testAlert.testMissingLabel(elements, 'Cats', 'Bananas');
-		await testAlert.testMissingCoord(elements, '1', '2');
+		await testAlert.testMissingLabel(elements, '0', '0');
+		await testAlert.testMissingCoord(elements, 'X', 'Y');
 
-		await testAlert.testMissingLabel(elements, 'Cats', 'Bananas');
-		await testAlert.testMissingCoord(elements, '1', '2');
+		await testAlert.testMissingLabel(elements, '1000', '2000000');
+		await testAlert.testMissingCoord(elements, 'Iterations', 'SSE');
 
-		await testAlert.testMissingLabel(elements, 'Cats', 'Bananas');
-		await testAlert.testMissingCoord(elements, '1', '2');
+		await testAlert.testMissingLabel(elements, '-35', '-926');
+		await testAlert.testMissingCoord(elements, 'Epochs', 'Accuracy');
 
 	});
 

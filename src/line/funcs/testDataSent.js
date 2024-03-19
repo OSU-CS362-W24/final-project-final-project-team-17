@@ -7,13 +7,13 @@ const domTesting = require('@testing-library/dom');
 const userEvent = require('@testing-library/user-event').default;
 const functions = require('./functions.js');
 
-const [htmlPath, jsPath] = functions.getPaths();
+const [html_path, js_path] = functions.getPaths('/line.html', '/line.js');
 
 async function testDataSent(elements, title, X_input, Y_input, X_label, 
                             Y_label){
 
     // init dom elements but dont use jest.isolateModules as noted by alex
-    functions.initDomFromFiles(htmlPath, jsPath);
+    functions.initDomFromFiles(html_path, js_path);
     functions.initElements(elements);
  
     // mocked generateChartImg function - return valid img URL
