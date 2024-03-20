@@ -5,10 +5,16 @@
 const fs = require('fs');
 require('@testing-library/jest-dom');
 const domTesting = require('@testing-library/dom');
+const exp = require('constants');
 const userEvent = require('@testing-library/user-event').default;
 
 const html_path = `${__dirname}/line.html`;
 const js_path = `${__dirname}/line.js`;
+
+beforeEach(() => {
+	window.localStorage.clear();
+    jest.resetModules(); 
+})
 
 // this will hold every element on the DOM that we'll need to mess aroudn with
 // for our integration tests
@@ -33,7 +39,8 @@ describe('Tests for adding values to a chart', () => {
 		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(1);
 		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(1);
 
-		await resetForNextTest(elements);
+		expect(domTesting.getAllByLabelText(document, 'X')[0]).toHaveValue(null);
+		expect(domTesting.getAllByLabelText(document, 'Y')[0]).toHaveValue(null);
 	});
 
     test('Added 2 values to a chart', async () => {
@@ -49,14 +56,16 @@ describe('Tests for adding values to a chart', () => {
 		await user.click(domTesting.getByText(document, '+'));
 		await user.type(domTesting.getAllByLabelText(document, 'X')[1], '100');
 		await user.type(domTesting.getAllByLabelText(document, 'Y')[1], '200');
-		await user.click(domTesting.getByText(document, '+'));
 
 
-		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(3);
-		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(3);
+		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(2);
+		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(2);
 
-		// reset everything for next test
-		await resetForNextTest(elements);
+		expect(domTesting.getAllByLabelText(document, 'X')[0]).toHaveValue(0);
+		expect(domTesting.getAllByLabelText(document, 'Y')[0]).toHaveValue(0);
+
+		expect(domTesting.getAllByLabelText(document, 'X')[1]).toHaveValue(100);
+		expect(domTesting.getAllByLabelText(document, 'Y')[1]).toHaveValue(200);
 	});
 
 
@@ -82,13 +91,22 @@ describe('Tests for adding values to a chart', () => {
 
 		await user.type(domTesting.getAllByLabelText(document, 'X')[3], '7');
 		await user.type(domTesting.getAllByLabelText(document, 'Y')[3], '8');
-		await user.click(domTesting.getByText(document, '+'));
 
-		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(5);
-		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(5);
 
-		// reset everything for next test
-		await resetForNextTest(elements);
+		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(4);
+		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(4);
+
+		expect(domTesting.getAllByLabelText(document, 'X')[0]).toHaveValue(1);
+		expect(domTesting.getAllByLabelText(document, 'Y')[0]).toHaveValue(2);
+
+		expect(domTesting.getAllByLabelText(document, 'X')[1]).toHaveValue(3);
+		expect(domTesting.getAllByLabelText(document, 'Y')[1]).toHaveValue(4);
+
+		expect(domTesting.getAllByLabelText(document, 'X')[2]).toHaveValue(5);
+		expect(domTesting.getAllByLabelText(document, 'Y')[2]).toHaveValue(6);
+
+		expect(domTesting.getAllByLabelText(document, 'X')[3]).toHaveValue(7);
+		expect(domTesting.getAllByLabelText(document, 'Y')[3]).toHaveValue(8);
 	});
 
     test('Added 1 value to a chart', async () => {
@@ -101,14 +119,12 @@ describe('Tests for adding values to a chart', () => {
 
 		await user.type(domTesting.getAllByLabelText(document, 'X')[0], '-1');
 		await user.type(domTesting.getAllByLabelText(document, 'Y')[0], '2');
-		await user.click(domTesting.getByText(document, '+'));
 
+		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(1);
+		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(1);
 
-		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(2);
-		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(2);
-
-		// reset everything for next test
-		await resetForNextTest(elements);
+		expect(domTesting.getAllByLabelText(document, 'X')[0]).toHaveValue(-1);
+		expect(domTesting.getAllByLabelText(document, 'Y')[0]).toHaveValue(2);
 	});
 
     test('Added 1 additional empty values to a chart', async () => {
@@ -124,9 +140,6 @@ describe('Tests for adding values to a chart', () => {
 
 		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(2);
 		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(2);
-
-		// reset everything for next test
-		await resetForNextTest(elements);
 	});
 
     test('Added 4 additional empty values to a chart', async () => {
@@ -145,9 +158,6 @@ describe('Tests for adding values to a chart', () => {
 
 		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(5);
 		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(5);
-
-		// reset everything for next test
-		await resetForNextTest(elements);
 	});
 
     test('Added 99 additional empty values to a chart', async () => {
@@ -164,9 +174,6 @@ describe('Tests for adding values to a chart', () => {
 
 		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(100);
 		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(100);
-
-		// reset everything for next test
-		await resetForNextTest(elements);
 	});
 
     test('Added 2 values and 5 additional empty values to a chart', async () => {
@@ -194,8 +201,11 @@ describe('Tests for adding values to a chart', () => {
 		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(7);
 		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(7);
 
-		// reset everything for next test
-		await resetForNextTest(elements);
+		expect(domTesting.getAllByLabelText(document, 'X')[0]).toHaveValue(0);
+		expect(domTesting.getAllByLabelText(document, 'Y')[0]).toHaveValue(0);
+
+		expect(domTesting.getAllByLabelText(document, 'X')[1]).toHaveValue(100);
+		expect(domTesting.getAllByLabelText(document, 'Y')[1]).toHaveValue(200);
 	});
 
     test('Added 4 values and 2 additional empty values to a chart', async () => {
@@ -225,8 +235,17 @@ describe('Tests for adding values to a chart', () => {
 		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(6);
 		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(6);
 
-		// reset everything for next test
-		await resetForNextTest(elements);
+		expect(domTesting.getAllByLabelText(document, 'X')[0]).toHaveValue(1);
+		expect(domTesting.getAllByLabelText(document, 'Y')[0]).toHaveValue(2);
+
+		expect(domTesting.getAllByLabelText(document, 'X')[1]).toHaveValue(3);
+		expect(domTesting.getAllByLabelText(document, 'Y')[1]).toHaveValue(4);
+
+		expect(domTesting.getAllByLabelText(document, 'X')[2]).toHaveValue(5);
+		expect(domTesting.getAllByLabelText(document, 'Y')[2]).toHaveValue(6);
+
+		expect(domTesting.getAllByLabelText(document, 'X')[3]).toHaveValue(7);
+		expect(domTesting.getAllByLabelText(document, 'Y')[3]).toHaveValue(8);
 	});
 
     test('Added 1 value and 100 additional empty values to a chart', async () => {
@@ -247,8 +266,8 @@ describe('Tests for adding values to a chart', () => {
 		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(101);
 		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(101);
 
-		// reset everything for next test
-		await resetForNextTest(elements);
+		expect(domTesting.getAllByLabelText(document, 'X')[0]).toHaveValue(-1);
+		expect(domTesting.getAllByLabelText(document, 'Y')[0]).toHaveValue(2);
 	});
 
 /*
@@ -329,7 +348,7 @@ function initElements(elements){
 
 // this function will reset everything back to its original condition for the 
 // next test
-function resetForNextTest(elements){
+function resetForNextTest(){
 
 	X_inputs = undefined;
 	Y_inputs = undefined;
