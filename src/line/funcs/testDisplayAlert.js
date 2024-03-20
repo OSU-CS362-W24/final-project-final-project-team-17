@@ -8,15 +8,15 @@ const domTesting = require('@testing-library/dom');
 const userEvent = require('@testing-library/user-event').default;
 const functions = require('./functions.js');
 
-const [htmlPath, jsPath] = functions.getPaths();
+const [html_path, js_path] = functions.getPaths('/line.html', '/line.js');
 
-async function testMissingLabel(elements, X_label_text, Y_label_text){
+async function testMissingCoord(elements, X_label_text, Y_label_text){
 
 	// do initializations: init the files, init our element object, setup our
 	// user, and start spying on window.alert. NOTE: mocking the implementation
 	// because 'window.alert' not implemented error is being throw when i dont
 	// stub the method
-	functions.initDomFromFiles(htmlPath, jsPath);
+	functions.initDomFromFiles(html_path, js_path);
 	functions.initElements(elements);
 	const user = userEvent.setup();
 	const alert_spy = jest.spyOn(window, 'alert').mockImplementation(() => {});
@@ -33,20 +33,20 @@ async function testMissingLabel(elements, X_label_text, Y_label_text){
 	expect(alert_spy).toHaveBeenCalled();
 	expect(call).toEqual('Error: No data specified!');
 
-	// reset elements object + page for next test, get rid of spy's middleware
-	// on the window.alert function :)
+	// this function will refresh everything for our future tests! (+ get rid
+    // of spys middleware) :)
 	await functions.resetForNextTest(elements);
 	alert_spy.mockRestore();
 
 }
 
-async function testMissingCoord(elements, X_input, Y_input){
+async function testMissingLabel(elements, X_input, Y_input){
 
 	// do initializations: init the files, init our element object, setup our
 	// user, and start spying on window.alert. NOTE: mocking the implementation
 	// because 'window.alert' not implemented error is being throw when i dont
 	// stub the method
-	functions.initDomFromFiles(htmlPath, jsPath);
+	functions.initDomFromFiles(html_path, js_path);
 	functions.initElements(elements);
 	const user = userEvent.setup();
 	const alert_spy = jest.spyOn(window, 'alert').mockImplementation(() => {});
@@ -64,7 +64,7 @@ async function testMissingCoord(elements, X_input, Y_input){
 	expect(call).toEqual('Error: Must specify a label for both X and Y!');
 
 	// this function will refresh everything for our future tests! (+ get rid
-    // of spys middleware):)
+    // of spys middleware) :)
 	await functions.resetForNextTest(elements);
 	alert_spy.mockRestore();
 

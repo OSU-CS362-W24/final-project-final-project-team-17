@@ -7,13 +7,13 @@ const domTesting = require('@testing-library/dom');
 const userEvent = require('@testing-library/user-event').default;
 const functions = require('./functions.js');
 
-const [htmlPath, jsPath] = functions.getPaths();
+const [html_path, js_path] = functions.getPaths('/line.html', '/line.js');
 
 async function testClearChart(elements, title, color, inputs, 
                               num_empty_inputs){
 
 	// do initializations: init the files, setup our user
-	functions.initDomFromFiles(htmlPath, jsPath);
+	functions.initDomFromFiles(html_path, js_path);
 	functions.initElements(elements);
 	const user = userEvent.setup();
 	var length = 1;
@@ -23,20 +23,10 @@ async function testClearChart(elements, title, color, inputs,
 	domTesting.fireEvent.input(elements.color_input, 
 							   {target: {value: color}});
 	
-	// do actions: create new (X, Y) inputs and add the above values 
-	// (stored in input) to them
-	for(const input of inputs){
-
-		await user.type(elements.X_inputs[length - 1], input[0]);
-		await user.type(elements.Y_inputs[length - 1], input[1]);
-		await user.click(elements.add_input_button);
-
-	}
-
-	// do actions: add K empty (X, Y) inputs then clear the chart
-	for(var i = 0; i < num_empty_inputs - 1; i++){ 
-		await user.click(elements.add_input_button);
-	}
+	// do actions: insert all given inputs, make N many empty input boxes,
+	// click the clear chart button in hopes that itll clear everything!
+	await functions.insertInputs(elements, inputs, 1);
+	await functions.makeEmptyInputs(elements, num_empty_inputs);
 	await user.click(elements.clear_chart_button);
 
 	// do assertions: assert theres only one (X, Y) input, assert that all
