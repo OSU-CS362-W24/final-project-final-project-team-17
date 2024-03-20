@@ -25,9 +25,18 @@ const elements = {
 
 };
 
-describe('UI integration tests', () => {
+describe('Tests for adding values to a chart', () => {
 
-    test('Adding values in the chart builder', async () => {
+	test('Ensure the chart initializes with one blank X and one blank Y input', async () => {
+		initDomFromFiles(html_path, js_path);
+
+		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(1);
+		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(1);
+
+		await resetForNextTest(elements);
+	});
+
+    test('Added 2 values to a chart', async () => {
 
 		// do initializations: load in files that we're gonna be testing, init
 		// our elements object
@@ -35,25 +44,73 @@ describe('UI integration tests', () => {
 
 		const user = userEvent.setup();
 
-		// do assertion: quick check that we only have 1 (X, Y) input available to 
-		// us to start off.
-		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(1);
-		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(1);
-
 		await user.type(domTesting.getAllByLabelText(document, 'X')[0], '0');
 		await user.type(domTesting.getAllByLabelText(document, 'Y')[0], '0');
 		await user.click(domTesting.getByText(document, '+'));
-		await user.type(domTesting.getAllByLabelText(document, 'X')[0], '100');
-		await user.type(domTesting.getAllByLabelText(document, 'X')[0], '200');
+		await user.type(domTesting.getAllByLabelText(document, 'X')[1], '100');
+		await user.type(domTesting.getAllByLabelText(document, 'Y')[1], '200');
 		await user.click(domTesting.getByText(document, '+'));
 
 
 		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(3);
-		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(3);
+		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(3);
 
 		// reset everything for next test
 		await resetForNextTest(elements);
 	});
+
+
+    test('Added 4 values to a chart', async () => {
+
+		// do initializations: load in files that we're gonna be testing, init
+		// our elements object
+		initDomFromFiles(html_path, js_path);
+
+		const user = userEvent.setup();
+
+		await user.type(domTesting.getAllByLabelText(document, 'X')[0], '1');
+		await user.type(domTesting.getAllByLabelText(document, 'Y')[0], '2');
+		await user.click(domTesting.getByText(document, '+'));
+
+		await user.type(domTesting.getAllByLabelText(document, 'X')[1], '3');
+		await user.type(domTesting.getAllByLabelText(document, 'Y')[1], '4');
+		await user.click(domTesting.getByText(document, '+'));
+
+		await user.type(domTesting.getAllByLabelText(document, 'X')[2], '5');
+		await user.type(domTesting.getAllByLabelText(document, 'Y')[2], '6');
+		await user.click(domTesting.getByText(document, '+'));
+
+		await user.type(domTesting.getAllByLabelText(document, 'X')[3], '7');
+		await user.type(domTesting.getAllByLabelText(document, 'Y')[3], '8');
+		await user.click(domTesting.getByText(document, '+'));
+
+		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(5);
+		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(5);
+
+		// reset everything for next test
+		await resetForNextTest(elements);
+	});
+
+    test('Added 1 value to a chart', async () => {
+
+		// do initializations: load in files that we're gonna be testing, init
+		// our elements object
+		initDomFromFiles(html_path, js_path);
+
+		const user = userEvent.setup();
+
+		await user.type(domTesting.getAllByLabelText(document, 'X')[0], '-1');
+		await user.type(domTesting.getAllByLabelText(document, 'Y')[0], '2');
+		await user.click(domTesting.getByText(document, '+'));
+
+
+		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(2);
+		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(2);
+
+		// reset everything for next test
+		await resetForNextTest(elements);
+	});
+
 
 /*
 		// tests to make sure that we can properly create and fill input boxes
