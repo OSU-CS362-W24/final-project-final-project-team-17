@@ -420,22 +420,137 @@ describe('Tests for proper alert creation', () => {
 		// of spys middleware) :)
 		alert_spy.mockRestore();
 	});
+});
+
+describe ('Tests for clearing chart data', () => {
+
+	test("Clearing chart data when chart is filled out", async () => {
+		// do initializations: init the files, setup our user
+		initDomFromFiles(html_path, js_path);
+		const user = userEvent.setup();
+
+		// do actions: type in the charts title, input a new color
+		await user.type(domTesting.getByLabelText(document, 'Chart title'), 'Cats vs. Dogs');
+		domTesting.fireEvent.input(domTesting.getByLabelText(document, 'Chart color'), {target: {value: '#123ABC'}});
+		
+		// do actions: insert all given inputs, make N many empty input boxes,
+		// click the clear chart button in hopes that itll clear everything!
+		await user.type(domTesting.getAllByLabelText(document, 'X')[0], '1');
+		await user.type(domTesting.getAllByLabelText(document, 'Y')[0], '2');
+		await user.click(domTesting.getByText(document, '+'));
+
+		await user.type(domTesting.getAllByLabelText(document, 'X')[1], '3');
+		await user.type(domTesting.getAllByLabelText(document, 'Y')[1], '4');
+		await user.click(domTesting.getByText(document, '+'));
+
+		await user.type(domTesting.getAllByLabelText(document, 'X')[2], '5');
+		await user.type(domTesting.getAllByLabelText(document, 'Y')[2], '6');
+		await user.click(domTesting.getByText(document, '+'));
+
+		await user.type(domTesting.getAllByLabelText(document, 'X')[3], '7');
+		await user.type(domTesting.getAllByLabelText(document, 'Y')[3], '8');
+
+		await user.click(domTesting.getByText(document, '+'));
+		await user.click(domTesting.getByText(document, '+'));
+
+		await user.click(domTesting.getByText(document, 'Clear chart data'));
+
+		// do assertions: assert theres only one (X, Y) input, assert that all
+		// other values have been cleared of their previous text, assert that the
+		// previously assigned color has been returned to its default value
+		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(1);
+		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(1);
+
+		expect(domTesting.getByLabelText(document, 'Chart title')).toHaveValue('');
+		expect(domTesting.getByLabelText(document, 'X label')).toHaveValue('');
+		expect(domTesting.getByLabelText(document, 'Y label')).toHaveValue('');
+		expect(domTesting.getAllByLabelText(document, 'X')[0]).toHaveValue(null);
+		expect(domTesting.getAllByLabelText(document, 'Y')[0]).toHaveValue(null);
+		expect(domTesting.getByLabelText(document, 'Chart color')).toHaveValue('#ff4500');
+	});
+
+	test("Clearing chart data when chart is filled out", async () => {
+		// do initializations: init the files, setup our user
+		initDomFromFiles(html_path, js_path);
+		const user = userEvent.setup();
+
+		// do actions: type in the charts title, input a new color
+		await user.type(domTesting.getByLabelText(document, 'Chart title'), 'Sum Squared Error');
+		domTesting.fireEvent.input(domTesting.getByLabelText(document, 'Chart color'), {target: {value: '#FFFFFF'}});
+		
+		// do actions: insert all given inputs, make N many empty input boxes,
+		// click the clear chart button in hopes that itll clear everything!
+		await user.type(domTesting.getAllByLabelText(document, 'X')[0], '1');
+		await user.type(domTesting.getAllByLabelText(document, 'Y')[0], '2');
+		await user.click(domTesting.getByText(document, '+'));
+
+		await user.type(domTesting.getAllByLabelText(document, 'X')[1], '2');
+		await user.type(domTesting.getAllByLabelText(document, 'Y')[1], '1');
+		await user.click(domTesting.getByText(document, '+'));
+
+		await user.type(domTesting.getAllByLabelText(document, 'X')[2], '3');
+		await user.type(domTesting.getAllByLabelText(document, 'Y')[2], '0.5');
+
+		await user.click(domTesting.getByText(document, '+'));
+
+		await user.click(domTesting.getByText(document, 'Clear chart data'));
+
+		// do assertions: assert theres only one (X, Y) input, assert that all
+		// other values have been cleared of their previous text, assert that the
+		// previously assigned color has been returned to its default value
+		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(1);
+		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(1);
+
+		expect(domTesting.getByLabelText(document, 'Chart title')).toHaveValue('');
+		expect(domTesting.getByLabelText(document, 'X label')).toHaveValue('');
+		expect(domTesting.getByLabelText(document, 'Y label')).toHaveValue('');
+		expect(domTesting.getAllByLabelText(document, 'X')[0]).toHaveValue(null);
+		expect(domTesting.getAllByLabelText(document, 'Y')[0]).toHaveValue(null);
+		expect(domTesting.getByLabelText(document, 'Chart color')).toHaveValue('#ff4500');
+	});
+
+
+	test("Clearing chart data when chart is filled out", async () => {
+		// do initializations: init the files, setup our user
+		initDomFromFiles(html_path, js_path);
+		const user = userEvent.setup();
+
+		// do actions: type in the charts title, input a new color
+		await user.type(domTesting.getByLabelText(document, 'Chart title'), 'Validation Accuracy');
+		domTesting.fireEvent.input(domTesting.getByLabelText(document, 'Chart color'), {target: {value: '#ABABAB'}});
+		
+		// do actions: insert all given inputs, make N many empty input boxes,
+		// click the clear chart button in hopes that itll clear everything!
+		await user.type(domTesting.getAllByLabelText(document, 'X')[0], '1');
+		await user.type(domTesting.getAllByLabelText(document, 'Y')[0], '0.876');
+		await user.click(domTesting.getByText(document, '+'));
+
+		await user.type(domTesting.getAllByLabelText(document, 'X')[1], '50');
+		await user.type(domTesting.getAllByLabelText(document, 'Y')[1], '0.945');
+
+		await user.click(domTesting.getByText(document, '+'));
+		await user.click(domTesting.getByText(document, '+'));
+		await user.click(domTesting.getByText(document, '+'));
+		await user.click(domTesting.getByText(document, '+'));
+		await user.click(domTesting.getByText(document, '+'));
+
+		await user.click(domTesting.getByText(document, 'Clear chart data'));
+
+		// do assertions: assert theres only one (X, Y) input, assert that all
+		// other values have been cleared of their previous text, assert that the
+		// previously assigned color has been returned to its default value
+		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(1);
+		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(1);
+
+		expect(domTesting.getByLabelText(document, 'Chart title')).toHaveValue('');
+		expect(domTesting.getByLabelText(document, 'X label')).toHaveValue('');
+		expect(domTesting.getByLabelText(document, 'Y label')).toHaveValue('');
+		expect(domTesting.getAllByLabelText(document, 'X')[0]).toHaveValue(null);
+		expect(domTesting.getAllByLabelText(document, 'Y')[0]).toHaveValue(null);
+		expect(domTesting.getByLabelText(document, 'Chart color')).toHaveValue('#ff4500');
+	});
 
 /*
-
-	test('Clearing chart data', async () => {
-		
-		// run several tests! cant hurt to run more :)
-		await testClearChart(elements, 'Cats vs. Dogs', '#123ABC',
-							 [['1','2'],['3','4'],['5','6'],['7','8']], 2);
-
-		await testClearChart(elements, 'Sum Squared Error', '#FFFFFF',
-							 [['1','2'],['2','1'],['3','0.5']], 1);
-		
-		await testClearChart(elements, 'Validation Accuracy', '#ABABAB',
-							 [['1','0.876'],['50','0.945']], 50);
-
-	});
 
 	test('Data correctly sent to chart generation function', async () => {
 		
