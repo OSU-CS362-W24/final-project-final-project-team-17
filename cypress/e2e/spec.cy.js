@@ -15,6 +15,33 @@ describe('Gallery app', () => {
     cy.get('#chart-img').should('exist');
   })
 
+
+  it('transfers data between chart types/pages', () => {
+    cy.visit('http://localhost:8080/')
+    cy.contains('Line').click();
+    cy.contains('Chart title').type('Example Chart');
+    cy.contains('X label').type('X');
+    cy.contains('Y label').type('Y');
+    cy.contains('button', '+').click();
+    cy.findAllByLabelText('X').eq(0).type('20');
+    cy.findAllByLabelText('X').eq(1).type('40');
+    cy.findAllByLabelText('Y').eq(0).type('30');
+    cy.findAllByLabelText('Y').eq(1).type('60');
+
+    cy.contains('Scatter').click();
+    cy.findAllByLabelText('X').eq(0).should('have.value', '20');
+    cy.findAllByLabelText('X').eq(1).should('have.value', '40');
+    cy.findAllByLabelText('Y').eq(0).should('have.value', '30');
+    cy.findAllByLabelText('Y').eq(1).should('have.value', '60');
+
+    cy.contains('Bar').click();
+    cy.findAllByLabelText('X').eq(0).should('have.value', '20');
+    cy.findAllByLabelText('X').eq(1).should('have.value', '40');
+    cy.findAllByLabelText('Y').eq(0).should('have.value', '30');
+    cy.findAllByLabelText('Y').eq(1).should('have.value', '60');
+  })
+
+
   it('User can save graph in gallery for later look up', () => {
     cy.visit('http://localhost:8080/')
     cy.contains('Line').click();
@@ -55,5 +82,11 @@ describe('Gallery app', () => {
     cy.contains('Gallery').click();
     cy.contains('Example Chart').click();
     cy.contains("Generate chart").should('exist');
+    cy.findAllByLabelText('Chart title').eq(0).clear("Example Chart");
+    cy.contains("Chart title").type('New chart');
+    cy.contains("Save chart").click();
+    cy.contains('Gallery').click();
+    cy.contains('New chart').should('exist');
   })
+
 })
