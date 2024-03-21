@@ -1,8 +1,12 @@
-//Test number 1
+const newColor = '#1100ff';
+
 describe('Gallery app', () => {
+  //Test #1(Graph creation)
   it('User can make chart as expected', () => {
     cy.visit('http://localhost:8080/')
     cy.contains('Line').click();
+    cy.get('#chart-color-input').invoke('val', newColor).trigger('change');
+    cy.get('#chart-color-input').should('have.value', newColor);
     cy.contains('Chart title').type('Example Chart');
     cy.contains('X label').type('X');
     cy.contains('Y label').type('Y');
@@ -15,7 +19,7 @@ describe('Gallery app', () => {
     cy.get('#chart-img').should('exist');
   })
 
-
+//Test #2(Chart data between pages)
   it('transfers data between chart types/pages', () => {
     cy.visit('http://localhost:8080/')
     cy.contains('Line').click();
@@ -41,7 +45,7 @@ describe('Gallery app', () => {
     cy.findAllByLabelText('Y').eq(1).should('have.value', '60');
   })
 
-
+//Test #3(charts can be saved in gallery)
   it('User can save graph in gallery for later look up', () => {
     cy.visit('http://localhost:8080/')
     cy.contains('Line').click();
@@ -62,7 +66,7 @@ describe('Gallery app', () => {
     cy.contains('Example Chart').should('exist');
   })
 
-
+//Test #4(Graphs in gallery can be reopened)
   it('allows user to click on chart in gallery to contuie working', () => {
     cy.visit('http://localhost:8080/')
     cy.contains('Line').click();
