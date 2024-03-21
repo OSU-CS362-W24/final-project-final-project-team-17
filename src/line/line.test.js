@@ -547,8 +547,18 @@ describe ('Tests for clearing chart data', () => {
 		await user.click(domTesting.getByText(document, 'Clear chart data'));
 
 		//Assert
-		const mainPage = domTesting.queryByRole(document, "main");
-		expect(mainPage).toMatchSnapshot();
+		expect(domTesting.getByLabelText(document, 'Chart title')).toHaveValue('');
+
+		expect(domTesting.getByLabelText(document, 'X label')).toHaveValue('');
+		expect(domTesting.getByLabelText(document, 'Y label')).toHaveValue('');
+	
+		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(1);
+		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(1);
+
+		expect(domTesting.getAllByLabelText(document, 'X')[0]).not.toHaveValue();
+		expect(domTesting.getAllByLabelText(document, 'Y')[0]).not.toHaveValue();
+
+		expect(domTesting.getByLabelText(document, 'Chart color')).toHaveValue('#ff4500');
 	});
 });
 
