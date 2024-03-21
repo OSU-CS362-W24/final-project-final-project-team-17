@@ -304,163 +304,119 @@ describe('Tests for adding values to a chart', () => {
  *
  * Tests for window alert -- 2nd test suite for UI tests
  * 
+ * Note: The window alert uses spies to ensure the window alert occurs correctly
  * 
 */
 
 
 describe('Tests for proper alert creation', () => {
-	test("Test for missing label alerts when no X and Y label are included", async () => {
-		// do initializations: init the files, init our element object, setup our
-		// user, and start spying on window.alert. NOTE: mocking the implementation
-		// because 'window.alert' not implemented error is being throw when i dont
-		// stub the method
+	test("Test for missing label alerts when no X and no Y label, but accurate chart data are included", async () => {
+		//Arrange
 		initDomFromFiles(html_path, js_path);
 
 		const user = userEvent.setup();
 		const alert_spy = jest.spyOn(window, 'alert').mockImplementation(() => {});
 
-		// do actions: type in the given text for the X_input and the Y_input,
-		// click the generate chart button
+		//Act
 		await user.type(domTesting.getAllByLabelText(document, 'X')[0], '0');
 		await user.type(domTesting.getAllByLabelText(document, 'Y')[0], '0');
 		await user.click(domTesting.getByText(document, 'Generate chart'));
 			
-		// do assertions: assert that alert was called and that it was given the
-		// parameter "Error: Must specify a label for both X and Y!"
+		//Assert
 		const call = alert_spy.mock.calls[0][0];
 		expect(alert_spy).toHaveBeenCalled();
 		expect(call).toEqual('Error: Must specify a label for both X and Y!');
 
-		// this function will refresh everything for our future tests! (+ get rid
-		// of spys middleware) :)
+		//Refresh spy
 		alert_spy.mockRestore();
 	});
 
-	test("Test for missing data alert when no data and valid labels are included", async () => {
+	test("Test for missing label alerts when X label and accurate chart data are included, but no Y label", async () => {
+		//Arrange
+		initDomFromFiles(html_path, js_path);
+
+		const user = userEvent.setup();
+		const alert_spy = jest.spyOn(window, 'alert').mockImplementation(() => {});
+
+		//Act
+		await user.type(domTesting.getByLabelText(document, 'X label'), 'X label');
+
+		await user.type(domTesting.getAllByLabelText(document, 'X')[0], '0');
+		await user.type(domTesting.getAllByLabelText(document, 'Y')[0], '0');
+
+		await user.click(domTesting.getByText(document, 'Generate chart'));
+			
+		//Assert
+		const call = alert_spy.mock.calls[0][0];
+		expect(alert_spy).toHaveBeenCalled();
+		expect(call).toEqual('Error: Must specify a label for both X and Y!');
+
+		//Refresh spy
+		alert_spy.mockRestore();
+	});
+
+	test("Test for missing label alerts when Y label and accurate chart data are included, but no X label", async () => {
+		//Arrange
+		initDomFromFiles(html_path, js_path);
+
+		const user = userEvent.setup();
+		const alert_spy = jest.spyOn(window, 'alert').mockImplementation(() => {});
+
+		//Act
+		await user.type(domTesting.getByLabelText(document, 'Y label'), 'Y label');
+
+		await user.type(domTesting.getAllByLabelText(document, 'X')[0], '0');
+		await user.type(domTesting.getAllByLabelText(document, 'Y')[0], '0');
+
+		await user.click(domTesting.getByText(document, 'Generate chart'));
+			
+		//Assert
+		const call = alert_spy.mock.calls[0][0];
+		expect(alert_spy).toHaveBeenCalled();
+		expect(call).toEqual('Error: Must specify a label for both X and Y!');
+
+		//Refresh spy
+		alert_spy.mockRestore();
+	});
+
+	test("Test for missing data alert when no data and valid X and Y labels are included", async () => {
+		//Arrange
 		initDomFromFiles(html_path, js_path);
 		const user = userEvent.setup();
 		const alert_spy = jest.spyOn(window, 'alert').mockImplementation(() => {});
 
-		// do actions: type in the given text for the X_label and the Y_label,
-		// click the generate chart button
+		//Act
 		await user.type(domTesting.getByLabelText(document, 'X label'), 'X');
 		await user.type(domTesting.getByLabelText(document, 'Y label'), 'Y');
 		await user.click(domTesting.getByText(document, 'Generate chart'));
 			
-		// do assertions: assert that alert was called and that it was given the
-		// parameter "Error: No data specified!"
+		//Assert
 		const call = alert_spy.mock.calls[0][0];
 		expect(alert_spy).toHaveBeenCalled();
 		expect(call).toEqual('Error: No data specified!');
 
-		// this function will refresh everything for our future tests! (+ get rid
-		// of spys middleware) :)
+		//Refresh spy
 		alert_spy.mockRestore();
 	});
 
-	test("Test for missing label alerts when no X and Y label are included", async () => {
-		// do initializations: init the files, init our element object, setup our
-		// user, and start spying on window.alert. NOTE: mocking the implementation
-		// because 'window.alert' not implemented error is being throw when i dont
-		// stub the method
-		initDomFromFiles(html_path, js_path);
-
-		const user = userEvent.setup();
-		const alert_spy = jest.spyOn(window, 'alert').mockImplementation(() => {});
-
-		// do actions: type in the given text for the X_input and the Y_input,
-		// click the generate chart button
-		await user.type(domTesting.getAllByLabelText(document, 'X')[0], '1000');
-		await user.type(domTesting.getAllByLabelText(document, 'Y')[0], '2000000');
-		await user.click(domTesting.getByText(document, 'Generate chart'));
-			
-		// do assertions: assert that alert was called and that it was given the
-		// parameter "Error: Must specify a label for both X and Y!"
-		const call = alert_spy.mock.calls[0][0];
-		expect(alert_spy).toHaveBeenCalled();
-		expect(call).toEqual('Error: Must specify a label for both X and Y!');
-
-		// this function will refresh everything for our future tests! (+ get rid
-		// of spys middleware) :)
-		alert_spy.mockRestore();
-	});
-
-	test("Test for missing data alert when no data and valid labels are included", async () => {
+	test("Test for missing data alert overriding missing label alert when both are missing", async () => {
+		//Arrange
 		initDomFromFiles(html_path, js_path);
 		const user = userEvent.setup();
 		const alert_spy = jest.spyOn(window, 'alert').mockImplementation(() => {});
 
-		// do actions: type in the given text for the X_label and the Y_label,
-		// click the generate chart button
-		await user.type(domTesting.getByLabelText(document, 'X label'), 'Iterations');
-		await user.type(domTesting.getByLabelText(document, 'Y label'), 'SSE');
+		//Act
 		await user.click(domTesting.getByText(document, 'Generate chart'));
 			
-		// do assertions: assert that alert was called and that it was given the
-		// parameter "Error: No data specified!"
+		//Assert
 		const call = alert_spy.mock.calls[0][0];
 		expect(alert_spy).toHaveBeenCalled();
 		expect(call).toEqual('Error: No data specified!');
 
-		// this function will refresh everything for our future tests! (+ get rid
-		// of spys middleware) :)
-		alert_spy.mockRestore();
-	});
-
-	test("Test for missing label alerts when no X and Y label are included", async () => {
-		// do initializations: init the files, init our element object, setup our
-		// user, and start spying on window.alert. NOTE: mocking the implementation
-		// because 'window.alert' not implemented error is being throw when i dont
-		// stub the method
-		initDomFromFiles(html_path, js_path);
-
-		const user = userEvent.setup();
-		const alert_spy = jest.spyOn(window, 'alert').mockImplementation(() => {});
-
-		// do actions: type in the given text for the X_input and the Y_input,
-		// click the generate chart button
-		await user.type(domTesting.getAllByLabelText(document, 'X')[0], '-35');
-		await user.type(domTesting.getAllByLabelText(document, 'Y')[0], '-926');
-		await user.click(domTesting.getByText(document, 'Generate chart'));
-			
-		// do assertions: assert that alert was called and that it was given the
-		// parameter "Error: Must specify a label for both X and Y!"
-		const call = alert_spy.mock.calls[0][0];
-		expect(alert_spy).toHaveBeenCalled();
-		expect(call).toEqual('Error: Must specify a label for both X and Y!');
-
-		// this function will refresh everything for our future tests! (+ get rid
-		// of spys middleware) :)
-		alert_spy.mockRestore();
-	});
-
-	test("Test for missing data alert when no data and valid labels are included", async () => {
-		initDomFromFiles(html_path, js_path);
-		const user = userEvent.setup();
-		const alert_spy = jest.spyOn(window, 'alert').mockImplementation(() => {});
-
-		// do actions: type in the given text for the X_label and the Y_label,
-		// click the generate chart button
-		await user.type(domTesting.getByLabelText(document, 'X label'), 'Epochs');
-		await user.type(domTesting.getByLabelText(document, 'Y label'), 'Accuracy');
-		await user.click(domTesting.getByText(document, 'Generate chart'));
-			
-		// do assertions: assert that alert was called and that it was given the
-		// parameter "Error: No data specified!"
-		const call = alert_spy.mock.calls[0][0];
-		expect(alert_spy).toHaveBeenCalled();
-		expect(call).toEqual('Error: No data specified!');
-
-		// this function will refresh everything for our future tests! (+ get rid
-		// of spys middleware) :)
+		//Refresh spy
 		alert_spy.mockRestore();
 	});
 });
-
-
-
-
-
 
 
 
