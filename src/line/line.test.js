@@ -297,8 +297,6 @@ describe('Tests for adding values to a chart', () => {
 
 
 
-
-
 /*
  *
  *
@@ -307,7 +305,6 @@ describe('Tests for adding values to a chart', () => {
  * Note: The window alert uses spies to ensure the window alert occurs correctly
  * 
 */
-
 
 describe('Tests for proper alert creation', () => {
 	test("Test for missing label alerts when no X and no Y label, but accurate chart data are included", async () => {
@@ -420,7 +417,6 @@ describe('Tests for proper alert creation', () => {
 
 
 
-
 /*
  *
  *
@@ -428,7 +424,6 @@ describe('Tests for proper alert creation', () => {
  * 
  * 
 */
-
 
 describe ('Tests for clearing chart data', () => {
 	test("Chart title is cleared when the chart is cleared", async () => {
@@ -518,7 +513,7 @@ describe ('Tests for clearing chart data', () => {
 	});
 
 
-	test("Clearing chart data when chart is filled out and generated", async () => {
+	test("Clearing chart data when chart is filled out", async () => {
 		//Arrange
 		initDomFromFiles(html_path, js_path);
 		const user = userEvent.setup();
@@ -527,7 +522,11 @@ describe ('Tests for clearing chart data', () => {
 		await user.type(domTesting.getByLabelText(document, 'Chart title'), 'Validation Accuracy');
 		domTesting.fireEvent.input(domTesting.getByLabelText(document, 'Chart color'), {target: {value: '#ABABAB'}});
 		
-		//Act
+		const xLabel = domTesting.getByLabelText(document, 'X label');
+		const yLabel = domTesting.getByLabelText(document, 'Y label');
+		await user.type(xLabel, "X label");
+		await user.type(yLabel, "Y label");
+
 		const addButton = domTesting.getByText(document, '+');
 		await user.click(addButton);
 		await user.click(addButton);
@@ -545,8 +544,6 @@ describe ('Tests for clearing chart data', () => {
 		await user.type(x_inputs[1], '50');
 		await user.type(y_inputs[1], '0.945');
 
-		await user.click(domTesting.getByText(document, 'Generate chart'));
-
 		await user.click(domTesting.getByText(document, 'Clear chart data'));
 
 		//Assert
@@ -557,7 +554,6 @@ describe ('Tests for clearing chart data', () => {
 
 
 
-
 /*
  *
  *
@@ -565,7 +561,6 @@ describe ('Tests for clearing chart data', () => {
  * 
  * 
 */
-
 
 describe("Tests for sending data to the graph generation function", () => {
 	test("Data correctly sent to chart generation function", async () => {
