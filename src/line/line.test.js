@@ -23,7 +23,7 @@ function initDomFromFiles(html_path, js_path) {
 	document.write(html);
 	document.close();
 
-	require(js_path)
+	require(js_path);
 }
 
 /*
@@ -37,242 +37,261 @@ function initDomFromFiles(html_path, js_path) {
 describe('Tests for adding values to a chart', () => {
 
 	test('Ensure the chart initializes with one blank X and one blank Y input', async () => {
+		//Arrange
 		initDomFromFiles(html_path, js_path);
 
-		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(1);
-		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(1);
+		//Assert
+		const x_inputs = domTesting.getAllByLabelText(document, 'X');
+		const y_inputs = domTesting.getAllByLabelText(document, 'Y');
 
-		expect(domTesting.getAllByLabelText(document, 'X')[0]).toHaveValue(null);
-		expect(domTesting.getAllByLabelText(document, 'Y')[0]).toHaveValue(null);
+		expect(x_inputs).toHaveLength(1);
+		expect(y_inputs).toHaveLength(1);
+
+		expect(x_inputs[0]).not.toHaveValue();
+		expect(y_inputs[0]).not.toHaveValue();
 	});
 
-    test('Added 2 values to a chart', async () => {
+    test('Add 4 preset, established values to the line chart [(1, 2), (3, 4), (5, 6), (7, 8)]', async () => {
 
-		// do initializations: load in files that we're gonna be testing, init
-		// our elements object
+		//Arrange
 		initDomFromFiles(html_path, js_path);
-
 		const user = userEvent.setup();
 
-		await user.type(domTesting.getAllByLabelText(document, 'X')[0], '0');
-		await user.type(domTesting.getAllByLabelText(document, 'Y')[0], '0');
-		await user.click(domTesting.getByText(document, '+'));
-		await user.type(domTesting.getAllByLabelText(document, 'X')[1], '100');
-		await user.type(domTesting.getAllByLabelText(document, 'Y')[1], '200');
+		//Act
+		const addButton = domTesting.getByText(document, '+');
+
+		await user.click(addButton);
+		await user.click(addButton);
+		await user.click(addButton);
+
+		const x_inputs = domTesting.getAllByLabelText(document, 'X');
+		const y_inputs = domTesting.getAllByLabelText(document, 'Y');
+
+		await user.type(x_inputs[0], '1');
+		await user.type(y_inputs[0], '2');
+
+		await user.type(x_inputs[1], '3');
+		await user.type(y_inputs[1], '4');
+
+		await user.type(x_inputs[2], '5');
+		await user.type(y_inputs[2], '6');
+
+		await user.type(x_inputs[3], '7');
+		await user.type(y_inputs[3], '8');
 
 
-		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(2);
-		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(2);
+		//Length Assertions
+		expect(x_inputs).toHaveLength(4);
+		expect(y_inputs).toHaveLength(4);
 
-		expect(domTesting.getAllByLabelText(document, 'X')[0]).toHaveValue(0);
-		expect(domTesting.getAllByLabelText(document, 'Y')[0]).toHaveValue(0);
+		//Value Assertions
+		expect(x_inputs[0]).toHaveValue(1);
+		expect(y_inputs[0]).toHaveValue(2);
 
-		expect(domTesting.getAllByLabelText(document, 'X')[1]).toHaveValue(100);
-		expect(domTesting.getAllByLabelText(document, 'Y')[1]).toHaveValue(200);
+		expect(x_inputs[1]).toHaveValue(3);
+		expect(y_inputs[1]).toHaveValue(4);
+
+		expect(x_inputs[2]).toHaveValue(5);
+		expect(y_inputs[2]).toHaveValue(6);
+
+		expect(x_inputs[3]).toHaveValue(7);
+		expect(y_inputs[3]).toHaveValue(8);
 	});
 
-
-    test('Added 4 values to a chart', async () => {
-
-		// do initializations: load in files that we're gonna be testing, init
-		// our elements object
+    test('Add 1 value to a chart (-1, 2)', async () => {
+		//Arrange
 		initDomFromFiles(html_path, js_path);
-
 		const user = userEvent.setup();
 
-		await user.type(domTesting.getAllByLabelText(document, 'X')[0], '1');
-		await user.type(domTesting.getAllByLabelText(document, 'Y')[0], '2');
-		await user.click(domTesting.getByText(document, '+'));
+		//Act
+		const x_inputs = domTesting.getAllByLabelText(document, 'X');
+		const y_inputs = domTesting.getAllByLabelText(document, 'Y');
 
-		await user.type(domTesting.getAllByLabelText(document, 'X')[1], '3');
-		await user.type(domTesting.getAllByLabelText(document, 'Y')[1], '4');
-		await user.click(domTesting.getByText(document, '+'));
+		await user.type(x_inputs[0], '-1');
+		await user.type(y_inputs[0], '2');
 
-		await user.type(domTesting.getAllByLabelText(document, 'X')[2], '5');
-		await user.type(domTesting.getAllByLabelText(document, 'Y')[2], '6');
-		await user.click(domTesting.getByText(document, '+'));
+		//Assert length
+		expect(x_inputs).toHaveLength(1);
+		expect(y_inputs).toHaveLength(1);
 
-		await user.type(domTesting.getAllByLabelText(document, 'X')[3], '7');
-		await user.type(domTesting.getAllByLabelText(document, 'Y')[3], '8');
-
-
-		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(4);
-		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(4);
-
-		expect(domTesting.getAllByLabelText(document, 'X')[0]).toHaveValue(1);
-		expect(domTesting.getAllByLabelText(document, 'Y')[0]).toHaveValue(2);
-
-		expect(domTesting.getAllByLabelText(document, 'X')[1]).toHaveValue(3);
-		expect(domTesting.getAllByLabelText(document, 'Y')[1]).toHaveValue(4);
-
-		expect(domTesting.getAllByLabelText(document, 'X')[2]).toHaveValue(5);
-		expect(domTesting.getAllByLabelText(document, 'Y')[2]).toHaveValue(6);
-
-		expect(domTesting.getAllByLabelText(document, 'X')[3]).toHaveValue(7);
-		expect(domTesting.getAllByLabelText(document, 'Y')[3]).toHaveValue(8);
+		//Assert values
+		expect(x_inputs[0]).toHaveValue(-1);
+		expect(y_inputs[0]).toHaveValue(2);
 	});
 
-    test('Added 1 value to a chart', async () => {
-
-		// do initializations: load in files that we're gonna be testing, init
-		// our elements object
+    test('Add 1 additional empty value to a chart', async () => {
+		//Arrange
 		initDomFromFiles(html_path, js_path);
-
 		const user = userEvent.setup();
 
-		await user.type(domTesting.getAllByLabelText(document, 'X')[0], '-1');
-		await user.type(domTesting.getAllByLabelText(document, 'Y')[0], '2');
+		//Act
+		const addButton = domTesting.getByText(document, '+');
+		await user.click(addButton);
 
-		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(1);
-		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(1);
+		const x_inputs = domTesting.getAllByLabelText(document, 'X');
+		const y_inputs = domTesting.getAllByLabelText(document, 'Y');
 
-		expect(domTesting.getAllByLabelText(document, 'X')[0]).toHaveValue(-1);
-		expect(domTesting.getAllByLabelText(document, 'Y')[0]).toHaveValue(2);
+		//Assert
+		expect(x_inputs).toHaveLength(2);
+		expect(y_inputs).toHaveLength(2);
+
+		expect(x_inputs[1]).not.toHaveValue();
+		expect(y_inputs[1]).not.toHaveValue();
 	});
 
-    test('Added 1 additional empty values to a chart', async () => {
-
-		// do initializations: load in files that we're gonna be testing, init
-		// our elements object
+    test('Add 10 additional empty values to a chart', async () => {
+		//Arrange
 		initDomFromFiles(html_path, js_path);
-
 		const user = userEvent.setup();
 
-		await user.click(domTesting.getByText(document, '+'));
+		//Act
+		const addButton = domTesting.getByText(document, '+');
+		await user.click(addButton);
+		await user.click(addButton);
+		await user.click(addButton);
+		await user.click(addButton);
+		await user.click(addButton);
+		await user.click(addButton);
+		await user.click(addButton);
+		await user.click(addButton);
+		await user.click(addButton);
+		await user.click(addButton);
 
-
-		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(2);
-		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(2);
+		//Assert
+		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(11);
+		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(11);
 	});
 
-    test('Added 4 additional empty values to a chart', async () => {
-
-		// do initializations: load in files that we're gonna be testing, init
-		// our elements object
+    test('Add create a chart starting with 2 values [(0, 0), (100, 200)] and 5 empty values at the end of the inputs to a chart', async () => {
+		//Arrange
 		initDomFromFiles(html_path, js_path);
-
 		const user = userEvent.setup();
 
-		await user.click(domTesting.getByText(document, '+'));
-		await user.click(domTesting.getByText(document, '+'));
-		await user.click(domTesting.getByText(document, '+'));
-		await user.click(domTesting.getByText(document, '+'));
+		//Act
+		const addButton = domTesting.getByText(document, '+');
 
+		await user.click(addButton);
+		await user.click(addButton);
+		await user.click(addButton);
+		await user.click(addButton);
+		await user.click(addButton);
+		await user.click(addButton);
 
-		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(5);
-		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(5);
+		const x_inputs = domTesting.getAllByLabelText(document, 'X');
+		const y_inputs = domTesting.getAllByLabelText(document, 'Y');
+
+		await user.type(x_inputs[0], '0');
+		await user.type(y_inputs[0], '0');
+
+		await user.type(x_inputs[1], '100');
+		await user.type(y_inputs[1], '200');
+
+		//Assert
+		expect(x_inputs).toHaveLength(7);
+		expect(y_inputs).toHaveLength(7);
+
+		expect(x_inputs[0]).toHaveValue(0);
+		expect(y_inputs[0]).toHaveValue(0);
+
+		expect(x_inputs[1]).toHaveValue(100);
+		expect(y_inputs[1]).toHaveValue(200);
 	});
 
-    test('Added 99 additional empty values to a chart', async () => {
-
-		// do initializations: load in files that we're gonna be testing, init
-		// our elements object
+    test('Add 3 empty values at the start of the charts, and 3 set values [(1, 2), (3, 4), (5, 6)] at the end of the inputs to a chart', async () => {
+		//Arrange
 		initDomFromFiles(html_path, js_path);
-
 		const user = userEvent.setup();
 
-		for (var i = 0; i < 99; i++) {
-			await user.click(domTesting.getByText(document, '+'));
-		}
+		//Act
+		const addButton = domTesting.getByText(document, '+');
+		await user.click(addButton);
+		await user.click(addButton);
+		await user.click(addButton);
+		await user.click(addButton);
+		await user.click(addButton);
+		await user.click(addButton);
 
-		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(100);
-		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(100);
+		const x_inputs = domTesting.getAllByLabelText(document, 'X');
+		const y_inputs = domTesting.getAllByLabelText(document, 'Y');
+
+		await user.type(x_inputs[4], '1');
+		await user.type(y_inputs[4], '2');
+
+		await user.type(x_inputs[5], '3');
+		await user.type(y_inputs[5], '4');
+
+		await user.type(x_inputs[6], '5');
+		await user.type(y_inputs[6], '6');
+
+		//Assert
+		expect(x_inputs).toHaveLength(7);
+		expect(y_inputs).toHaveLength(7);
+
+		expect(x_inputs[4]).toHaveValue(1);
+		expect(y_inputs[4]).toHaveValue(2);
+
+		expect(x_inputs[5]).toHaveValue(3);
+		expect(y_inputs[5]).toHaveValue(4);
+
+		expect(x_inputs[6]).toHaveValue(5);
+		expect(y_inputs[6]).toHaveValue(6);
 	});
 
-    test('Added 2 values and 5 additional empty values to a chart', async () => {
-
-		// do initializations: load in files that we're gonna be testing, init
-		// our elements object
+    test('Add 3 values [(1, 4), (5, 2), (9, 0)] and 4 empty inputs in random locations', async () => {
+		//Arrange
 		initDomFromFiles(html_path, js_path);
-
 		const user = userEvent.setup();
 
+		//Act
+		const addButton = domTesting.getByText(document, '+');
+		await user.click(addButton);
+		await user.click(addButton);
+		await user.click(addButton);
+		await user.click(addButton);
+		await user.click(addButton);
+		await user.click(addButton);
+		await user.click(addButton);
 
-		await user.type(domTesting.getAllByLabelText(document, 'X')[0], '0');
-		await user.type(domTesting.getAllByLabelText(document, 'Y')[0], '0');
-		await user.click(domTesting.getByText(document, '+'));
-		await user.type(domTesting.getAllByLabelText(document, 'X')[1], '100');
-		await user.type(domTesting.getAllByLabelText(document, 'Y')[1], '200');
+		const x_inputs = domTesting.getAllByLabelText(document, 'X');
+		const y_inputs = domTesting.getAllByLabelText(document, 'Y');
 
-		await user.click(domTesting.getByText(document, '+'));
-		await user.click(domTesting.getByText(document, '+'));
-		await user.click(domTesting.getByText(document, '+'));
-		await user.click(domTesting.getByText(document, '+'));
-		await user.click(domTesting.getByText(document, '+'));
+		await user.type(x_inputs[2], '1');
+		await user.type(y_inputs[2], '4');
 
+		await user.type(x_inputs[5], '5');
+		await user.type(y_inputs[5], '2');
 
-		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(7);
-		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(7);
+		await user.type(x_inputs[6], '9');
+		await user.type(y_inputs[6], '0');
 
-		expect(domTesting.getAllByLabelText(document, 'X')[0]).toHaveValue(0);
-		expect(domTesting.getAllByLabelText(document, 'Y')[0]).toHaveValue(0);
+		//Assert
+		expect(x_inputs).toHaveLength(8);
+		expect(y_inputs).toHaveLength(8);
 
-		expect(domTesting.getAllByLabelText(document, 'X')[1]).toHaveValue(100);
-		expect(domTesting.getAllByLabelText(document, 'Y')[1]).toHaveValue(200);
+		expect(x_inputs[0]).not.toHaveValue();
+		expect(y_inputs[0]).not.toHaveValue();
+
+		expect(x_inputs[1]).not.toHaveValue();
+		expect(y_inputs[1]).not.toHaveValue();
+
+		expect(x_inputs[2]).toHaveValue(1);
+		expect(y_inputs[2]).toHaveValue(4);
+
+		expect(x_inputs[3]).not.toHaveValue();
+		expect(y_inputs[3]).not.toHaveValue();
+
+		expect(x_inputs[4]).not.toHaveValue();
+		expect(y_inputs[4]).not.toHaveValue();
+
+		expect(x_inputs[5]).toHaveValue(5);
+		expect(y_inputs[5]).toHaveValue(2);
+
+		expect(x_inputs[6]).toHaveValue(9);
+		expect(y_inputs[6]).toHaveValue(0);
+
+		expect(x_inputs[7]).not.toHaveValue();
+		expect(y_inputs[7]).not.toHaveValue();
 	});
-
-    test('Added 4 values and 2 additional empty values to a chart', async () => {
-
-		// do initializations: load in files that we're gonna be testing, init
-		// our elements object
-		initDomFromFiles(html_path, js_path);
-
-		const user = userEvent.setup();
-
-		await user.type(domTesting.getAllByLabelText(document, 'X')[0], '1');
-		await user.type(domTesting.getAllByLabelText(document, 'Y')[0], '2');
-		await user.click(domTesting.getByText(document, '+'));
-		await user.type(domTesting.getAllByLabelText(document, 'X')[1], '3');
-		await user.type(domTesting.getAllByLabelText(document, 'Y')[1], '4');
-		await user.click(domTesting.getByText(document, '+'));
-		await user.type(domTesting.getAllByLabelText(document, 'X')[2], '5');
-		await user.type(domTesting.getAllByLabelText(document, 'Y')[2], '6');
-		await user.click(domTesting.getByText(document, '+'));
-		await user.type(domTesting.getAllByLabelText(document, 'X')[3], '7');
-		await user.type(domTesting.getAllByLabelText(document, 'Y')[3], '8');
-
-		await user.click(domTesting.getByText(document, '+'));
-		await user.click(domTesting.getByText(document, '+'));
-
-
-		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(6);
-		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(6);
-
-		expect(domTesting.getAllByLabelText(document, 'X')[0]).toHaveValue(1);
-		expect(domTesting.getAllByLabelText(document, 'Y')[0]).toHaveValue(2);
-
-		expect(domTesting.getAllByLabelText(document, 'X')[1]).toHaveValue(3);
-		expect(domTesting.getAllByLabelText(document, 'Y')[1]).toHaveValue(4);
-
-		expect(domTesting.getAllByLabelText(document, 'X')[2]).toHaveValue(5);
-		expect(domTesting.getAllByLabelText(document, 'Y')[2]).toHaveValue(6);
-
-		expect(domTesting.getAllByLabelText(document, 'X')[3]).toHaveValue(7);
-		expect(domTesting.getAllByLabelText(document, 'Y')[3]).toHaveValue(8);
-	});
-
-    test('Added 1 value and 100 additional empty values to a chart', async () => {
-
-		// do initializations: load in files that we're gonna be testing, init
-		// our elements object
-		initDomFromFiles(html_path, js_path);
-
-		const user = userEvent.setup();
-
-		await user.type(domTesting.getAllByLabelText(document, 'X')[0], '-1');
-		await user.type(domTesting.getAllByLabelText(document, 'Y')[0], '2');
-
-		for (var i = 0; i < 100; i++) {
-			await user.click(domTesting.getByText(document, '+'));
-		}
-
-		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(101);
-		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(101);
-
-		expect(domTesting.getAllByLabelText(document, 'X')[0]).toHaveValue(-1);
-		expect(domTesting.getAllByLabelText(document, 'Y')[0]).toHaveValue(2);
-	});
-
 });
 
 
