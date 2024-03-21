@@ -513,7 +513,7 @@ describe ('Tests for clearing chart data', () => {
 	});
 
 
-	test("Clearing chart data when chart is filled out", async () => {
+	test("All chart data is cleared when the chart is cleared", async () => {
 		//Arrange
 		initDomFromFiles(html_path, js_path);
 		const user = userEvent.setup();
@@ -547,8 +547,18 @@ describe ('Tests for clearing chart data', () => {
 		await user.click(domTesting.getByText(document, 'Clear chart data'));
 
 		//Assert
-		const mainPage = domTesting.queryByRole(document, "main");
-		expect(mainPage).toMatchSnapshot();
+		expect(domTesting.getByLabelText(document, 'Chart title')).toHaveValue('');
+
+		expect(domTesting.getByLabelText(document, 'X label')).toHaveValue('');
+		expect(domTesting.getByLabelText(document, 'Y label')).toHaveValue('');
+	
+		expect(domTesting.getAllByLabelText(document, 'X')).toHaveLength(1);
+		expect(domTesting.getAllByLabelText(document, 'Y')).toHaveLength(1);
+
+		expect(domTesting.getAllByLabelText(document, 'X')[0]).not.toHaveValue();
+		expect(domTesting.getAllByLabelText(document, 'Y')[0]).not.toHaveValue();
+
+		expect(domTesting.getByLabelText(document, 'Chart color')).toHaveValue('#ff4500');
 	});
 });
 
@@ -564,80 +574,32 @@ describe ('Tests for clearing chart data', () => {
 
 describe("Tests for sending data to the graph generation function", () => {
 	test("Data correctly sent to chart generation function", async () => {
-		// init dom elements but dont use jest.isolateModules as noted by alex
+		//Arrange
 		initDomFromFiles(html_path, js_path);
 	
-		// mocked generateChartImg function - return valid img URL
+		//Create the spy
 		const gen_chart_spy = require('../lib/generateChartImg.js');
 		jest.mock('../lib/generateChartImg.js');
 		gen_chart_spy.mockImplementation(() => { return 'http://placekitten.com/480/480'; });
 
-		// do action: type in information to generate our chart with
 		const user = userEvent.setup();
+
+		//Act
 		await user.type(domTesting.getByLabelText(document, 'Chart title'), "Cats vs. Dogs");
 		await user.type(domTesting.getAllByLabelText(document, 'X')[0], "1");
 		await user.type(domTesting.getAllByLabelText(document, 'Y')[0], "2");
+		await user.click(domTesting.getByText(document, '+'));
+
+		await user.type(domTesting.getAllByLabelText(document, 'X')[1], "3");
+		await user.type(domTesting.getAllByLabelText(document, 'Y')[1], "4");
 		await user.type(domTesting.getByLabelText(document, 'X label'), "Cats");
 		await user.type(domTesting.getByLabelText(document, 'Y label'), "Dogs");
 		await user.click(domTesting.getByText(document, 'Generate chart'));
 
-		// assert that our function was called
+		//Assert
 		expect(gen_chart_spy).toHaveBeenCalled(); 
 		
-		// this function will refresh everything for our future tests! (+ get rid
-		// of spys middleware):)
-		gen_chart_spy.mockRestore();
-	});
-
-	test("Data correctly sent to chart generation function", async () => {
-		// init dom elements but dont use jest.isolateModules as noted by alex
-		initDomFromFiles(html_path, js_path);
-	
-		// mocked generateChartImg function - return valid img URL
-		const gen_chart_spy = require('../lib/generateChartImg.js');
-		jest.mock('../lib/generateChartImg.js');
-		gen_chart_spy.mockImplementation(() => { return 'http://placekitten.com/480/480'; });
-
-		// do action: type in information to generate our chart with
-		const user = userEvent.setup();
-		await user.type(domTesting.getByLabelText(document, 'Chart title'), "Sum Squared Error");
-		await user.type(domTesting.getAllByLabelText(document, 'X')[0], "1");
-		await user.type(domTesting.getAllByLabelText(document, 'Y')[0], "3.1415");
-		await user.type(domTesting.getByLabelText(document, 'X label'), "Iterations");
-		await user.type(domTesting.getByLabelText(document, 'Y label'), "Sum Squared Error");
-		await user.click(domTesting.getByText(document, 'Generate chart'));
-
-		// assert that our function was called
-		expect(gen_chart_spy).toHaveBeenCalled(); 
-		
-		// this function will refresh everything for our future tests! (+ get rid
-		// of spys middleware):)
-		gen_chart_spy.mockRestore();
-	});
-
-	test("Data correctly sent to chart generation function", async () => {
-		// init dom elements but dont use jest.isolateModules as noted by alex
-		initDomFromFiles(html_path, js_path);
-	
-		// mocked generateChartImg function - return valid img URL
-		const gen_chart_spy = require('../lib/generateChartImg.js');
-		jest.mock('../lib/generateChartImg.js');
-		gen_chart_spy.mockImplementation(() => { return 'http://placekitten.com/480/480'; });
-
-		// do action: type in information to generate our chart with
-		const user = userEvent.setup();
-		await user.type(domTesting.getByLabelText(document, 'Chart title'), "Validation Accuracy");
-		await user.type(domTesting.getAllByLabelText(document, 'X')[0], "50");
-		await user.type(domTesting.getAllByLabelText(document, 'Y')[0], "0.945");
-		await user.type(domTesting.getByLabelText(document, 'X label'), "Iterations");
-		await user.type(domTesting.getByLabelText(document, 'Y label'), "Accuracy");
-		await user.click(domTesting.getByText(document, 'Generate chart'));
-
-		// assert that our function was called
-		expect(gen_chart_spy).toHaveBeenCalled(); 
-		
-		// this function will refresh everything for our future tests! (+ get rid
-		// of spys middleware):)
+		//Restore spy
 		gen_chart_spy.mockRestore();
 	});
 });
